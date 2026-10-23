@@ -59,7 +59,8 @@ jobs:
             autoconf automake libtool libgcrypt20-dev libx11-dev libxpm-dev liblzma-dev libzstd-dev libfuse-dev zlib1g-dev patchelf librsvg2-dev zsync squashfs-tools \
             libarchive-dev libwebp-dev libmpv-dev libpoppler-glib-dev libcairo2-dev libcurl4-openssl-dev libssl-dev \
             libglib2.0-dev libfreetype-dev libavformat-dev libavcodec-dev libavutil-dev libswresample-dev libxtst-dev \
-            file desktop-file-utils wget ca-certificates unzip zstd
+            file desktop-file-utils wget ca-certificates unzip zstd \
+            libgtk-3-dev librsvg2-common libgdk-pixbuf2.0-bin glib-networking gvfs xvfb xauth dbus-x11
 
       # actions/cache restores as the runner user, which cannot create
       # directories under /usr/local.
@@ -181,6 +182,9 @@ jobs:
             --deploy-deps-only AppDir/usr/lib/whitenoise-linux \
             --desktop-file AppDir/usr/share/applications/whitenoise.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/256x256/apps/whitenoise.png
+          bash scripts/deploy-appimage-desktop.sh AppDir ./linuxdeploy
+          cc tests/appimage-desktop-probe.c -o build/appimage-desktop-probe $(pkg-config --cflags --libs gtk+-3.0)
+          bash tests/appimage-desktop-smoke.sh AppDir build/appimage-desktop-probe
           out="WhiteNoise-${GITHUB_REF_NAME}-x86_64.AppImage"
           bash scripts/sign-appimage.sh ./appimagetool AppDir "$out"
           echo "APPIMAGE_NAME=$out" >> "$GITHUB_ENV"
