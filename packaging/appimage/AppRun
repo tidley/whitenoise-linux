@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+# Do not trust an inherited APPDIR when running an extracted image.
+APPDIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)"
+export APPDIR
+. "$APPDIR/usr/lib/whitenoise-linux/appimage-desktop-env.sh"
+exec "$APPDIR/usr/bin/whitenoise" "$@"

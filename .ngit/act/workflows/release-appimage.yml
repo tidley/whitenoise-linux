@@ -61,7 +61,8 @@ jobs:
             pkg-config cmake ninja-build clang git curl \
             libarchive-dev libwebp-dev libmpv-dev libpoppler-glib-dev libcairo2-dev libcurl4-openssl-dev libssl-dev \
             libglib2.0-dev libfreetype-dev libavformat-dev libavcodec-dev libavutil-dev libswresample-dev libxtst-dev \
-            file desktop-file-utils wget ca-certificates unzip zstd
+            file desktop-file-utils wget ca-certificates unzip zstd \
+            libgtk-3-dev librsvg2-common libgdk-pixbuf2.0-bin glib-networking gvfs xvfb xauth dbus-x11
 
       - name: Build SDL3
         run: |
@@ -129,6 +130,9 @@ jobs:
             --deploy-deps-only AppDir/usr/lib/whitenoise-linux \
             --desktop-file AppDir/usr/share/applications/whitenoise.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/256x256/apps/whitenoise.png
+          bash scripts/deploy-appimage-desktop.sh AppDir ./linuxdeploy
+          cc tests/appimage-desktop-probe.c -o build/appimage-desktop-probe $(pkg-config --cflags --libs gtk+-3.0)
+          bash tests/appimage-desktop-smoke.sh AppDir build/appimage-desktop-probe
           # Short commit for a recognizable staging filename. act sets GITHUB_SHA.
           # No -u here, unlike the release: a staging build must not point
           # AppImageUpdate at the stable release channel.
