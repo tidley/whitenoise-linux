@@ -131,6 +131,7 @@ jobs:
             --desktop-file AppDir/usr/share/applications/whitenoise.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/256x256/apps/whitenoise.png
           bash scripts/deploy-appimage-desktop.sh AppDir ./linuxdeploy
+          bash tests/appimage-env-snapshot.sh packaging/appimage/desktop-env.sh
           cc tests/appimage-desktop-probe.c -o build/appimage-desktop-probe $(pkg-config --cflags --libs gtk+-3.0)
           bash tests/appimage-desktop-smoke.sh AppDir build/appimage-desktop-probe
           # Short commit for a recognizable staging filename. act sets GITHUB_SHA.

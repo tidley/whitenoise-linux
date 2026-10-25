@@ -49,6 +49,9 @@ cp -a "$schemas" "$appdir/usr/share/glib-2.0/"
 glib-compile-schemas "$appdir/usr/share/glib-2.0/schemas"
 install -m 644 "$here/packaging/appimage/desktop-env.sh" \
   "$appdir/usr/lib/whitenoise-linux/appimage-desktop-env.sh"
+mkdir -p "$appdir/usr/lib/whitenoise-linux/host-bin"
+cc -static -O2 "$here/packaging/appimage/host-zenity.c" \
+  -o "$appdir/usr/lib/whitenoise-linux/host-bin/zenity"
 # AppRun is normally a symlink to the binary. Unlink before installing a script.
 rm -f "$appdir/AppRun"
 install -m 755 "$here/packaging/appimage/AppRun" "$appdir/AppRun"

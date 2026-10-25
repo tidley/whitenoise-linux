@@ -12,7 +12,17 @@ glib-networking and the librsvg Pixbuf loader. Keep deployment on the same
 distribution as the application build. Do not copy modules from the target
 desktop into the AppDir.
 
-`packaging/appimage/AppRun` selects these modules and libraries. It does not
+`packaging/appimage/AppRun` saves the original library, module, data and PATH
+environment before it selects bundled values. Host curl, notifications and
+external-link commands restore that snapshot in their child environment.
+The application and packaged helpers retain bundled libraries and modules.
+SDL's internal zenity fallback uses a static PATH launcher that restores the
+same snapshot before it starts the host zenity. A shell launcher is not safe
+because the host shell can also load incompatible bundled libraries.
+Empty and unset variables
+remain distinct. Restarting the AppImage retains the original snapshot.
+
+The launcher does not
 disable GIO, SVG, Wayland or file dialogs. The bundled GVfs client talks to
 the desktop's existing GVfs services over D-Bus; backend daemons remain host
 services. `GIO_EXTRA_MODULES` is cleared because extra host modules have the
@@ -37,6 +47,10 @@ signing. This requires Xvfb, xauth and D-Bus. It checks:
 
 The existing packaged SDL dummy-driver startup test remains separate. It
 checks application boot, but cannot exercise the Wayland/libdecor GTK path.
+The release workflow also extracts that same AppImage in an Arch container.
+It runs `tests/appimage-host-tools.sh` against host curl, gio and zenity with
+the production process-environment code. This checks newer host libraries
+without rebuilding the application. The test executable is not shipped.
 When changing this deployment, also test the AppImage under Wayland on a
 distribution newer than the build system. For an isolated reproduction, use
 a Debian 13 container with Weston headless, libdecor's GTK plugin, GTK3,

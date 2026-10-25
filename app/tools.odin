@@ -76,6 +76,12 @@ tool_exec :: proc(
 		}
 		return sandbox_tool_exec(1, desc.command[1:], allocator, credential_proxy)
 	} else {
+		when ODIN_OS == .Linux {
+			// curl_path returns a bare name only for the host fallback.
+			if len(desc.command) > 0 && desc.command[0] == "curl" {
+				return host_process_exec(desc, allocator)
+			}
+		}
 		return os.process_exec(desc, allocator)
 	}
 }
